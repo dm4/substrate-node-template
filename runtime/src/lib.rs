@@ -446,6 +446,17 @@ impl_runtime_apis! {
 		}
 	}
 
+	// Here we implement our custom runtime API.
+	impl pallet_template_runtime_api::TemplateApi<Block> for Runtime {
+		fn get_double() -> u32 {
+			// This Runtime API calls into a specific pallet. Calling a pallet is a common
+			// design pattern. You can see most other APIs in this file do the same.
+			// It is also possible to write your logic right here in the runtime
+			// amalgamator file
+			TemplateModule::get_double()
+		}
+	}
+
 	#[cfg(feature = "runtime-benchmarks")]
 	impl frame_benchmarking::Benchmark<Block> for Runtime {
 		fn dispatch_benchmark(

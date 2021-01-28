@@ -12,7 +12,7 @@ test:
 
 .PHONY: run
 run:
-	 cargo run --release -- --dev --tmp
+	 cargo run --release -- --dev --tmp --unsafe-ws-external
 
 .PHONY: build
 build:

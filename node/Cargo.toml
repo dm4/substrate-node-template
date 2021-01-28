@@ -20,10 +20,14 @@ substrate-build-script-utils = '2.0.1'
 
 [dependencies]
 jsonrpc-core = '15.0.0'
+jsonrpc-core-client = '15.0.0'
+jsonrpc-derive = '15.0.0'
 structopt = '0.3.8'
 
 # local dependencies
 node-template-runtime = { path = '../runtime', version = '2.0.1' }
+pallet-template-rpc = { path = '../pallets/template/rpc' }
+pallet-template-runtime-api = { path = '../pallets/template/runtime-api' }
 
 # Substrate dependencies
 frame-benchmarking = '2.0.1'

@@ -101,3 +101,12 @@ decl_module! {
 		}
 	}
 }
+
+impl<T: Trait> Module<T> {
+    pub fn get_double() -> u32 {
+        match Something::get() {
+			None => 0,
+			Some(n) => n * 2,
+		}
+    }
+}

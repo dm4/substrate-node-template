@@ -13,6 +13,8 @@ use sp_blockchain::{Error as BlockChainError, HeaderMetadata, HeaderBackend};
 use sp_block_builder::BlockBuilder;
 pub use sc_rpc_api::DenyUnsafe;
 use sp_transaction_pool::TransactionPool;
+use jsonrpc_core::{Error as RpcError, ErrorCode, Result};
+use jsonrpc_derive::rpc;
 
 
 /// Full client dependencies.
@@ -35,6 +37,7 @@ pub fn create_full<C, P>(
 	C::Api: substrate_frame_rpc_system::AccountNonceApi<Block, AccountId, Index>,
 	C::Api: pallet_transaction_payment_rpc::TransactionPaymentRuntimeApi<Block, Balance>,
 	C::Api: BlockBuilder<Block>,
+	C::Api: pallet_template_runtime_api::TemplateApi<Block>,
 	P: TransactionPool + 'static,
 {
 	use substrate_frame_rpc_system::{FullSystem, SystemApi};
@@ -55,10 +58,39 @@ pub fn create_full<C, P>(
 		TransactionPaymentApi::to_delegate(TransactionPayment::new(client.clone()))
 	);
 
+	io.extend_with(SillyRpc::to_delegate(
+		Silly {},
+	));
+
+	io.extend_with(pallet_template_rpc::TemplateApi::to_delegate(
+		pallet_template_rpc::Template::new(client)
+	));
+
 	// Extend this RPC with a custom API by using the following syntax.
 	// `YourRpcStruct` should have a reference to a client, which is needed
 	// to call into the runtime.
 	// `io.extend_with(YourRpcTrait::to_delegate(YourRpcStruct::new(ReferenceToClient, ...)));`
 
 	io
+}
+
+#[rpc]
+pub trait SillyRpc {
+    #[rpc(name = "silly_seven")]
+    fn silly_7(&self) -> Result<u64>;
+
+    #[rpc(name = "silly_double")]
+    fn silly_double(&self, val: u64) -> Result<u64>;
+}
+
+pub struct Silly;
+
+impl SillyRpc for Silly {
+    fn silly_7(&self) -> Result<u64> {
+        Ok(7)
+    }
+
+    fn silly_double(&self, val: u64) -> Result<u64> {
+        Ok(2 * val)
+    }
 }
